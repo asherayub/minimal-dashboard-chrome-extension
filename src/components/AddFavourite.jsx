@@ -10,6 +10,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Box,
 } from "@chakra-ui/react";
 import { HiPlus } from "react-icons/hi";
 import { FavouriteContext } from "./FavouriteContext";
@@ -21,11 +22,8 @@ export default function AddFavourite() {
   const { favouriteObj, favourites, handleFavouriteInput, addToFavourite } =
     useContext(FavouriteContext);
 
-  React.useEffect(() => {
-    console.log(favourites);
-  }, [favourites]);
   return (
-    <>
+    <Box alignSelf={"start"}>
       <Button onClick={onOpen} w={"70px"} h={"70px"} borderRadius={"50"}>
         <HiPlus />
       </Button>
@@ -69,6 +67,9 @@ export default function AddFavourite() {
                 addToFavourite();
                 onClose();
               }}
+              isDisabled={
+                favouriteObj.siteName === "" || favouriteObj.siteURL === ""
+              }
             >
               Save
             </Button>
@@ -76,6 +77,6 @@ export default function AddFavourite() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </Box>
   );
 }
