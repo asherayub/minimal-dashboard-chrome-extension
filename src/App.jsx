@@ -24,15 +24,21 @@ import useHover from "./useHooks/useHover";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchEngine, setSearchEngine] = useState("google");
+  const [searchEngine, setSearchEngine] = useState(
+    localStorage.getItem("searchEngine")
+      ? localStorage.getItem("searchEngine")
+      : "google"
+  );
   const { favourites, removeFavorite } = useContext(FavouriteContext);
   const [isHovered, hoverRef] = useHover();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const searchIcon = () => {
     if (searchEngine === "google") {
+      localStorage.setItem("searchEngine", "google");
       return <BsGoogle />;
     } else if (searchEngine === "bing") {
+      localStorage.setItem("searchEngine", "bing");
       return <SiMicrosoftbing />;
     }
   };
@@ -51,7 +57,7 @@ function App() {
             >
               <InputGroup>
                 <InputLeftElement
-                cursor={"pointer"}
+                  cursor={"pointer"}
                   onClick={() => {
                     searchEngine === "google"
                       ? setSearchEngine("bing")
@@ -114,8 +120,8 @@ function App() {
                         onClick={() => removeFavorite(fav.id)}
                         style={{
                           position: "absolute",
-                          right: "0",
-                          bottom: "5",
+                          right: "-5",
+                          top: "0",
                           cursor: "pointer",
                         }}
                       />
