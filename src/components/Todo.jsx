@@ -1,5 +1,4 @@
 import React from "react";
-
 import { Button, Flex, Input, Box, Text, Divider } from "@chakra-ui/react";
 import { nanoid } from "nanoid";
 import { FcTodoList } from "react-icons/fc";
@@ -20,7 +19,7 @@ const Todo = () => {
   };
 
   const addToTodo = () => {
-    setTodoList([...todoList, todoItem]);
+    setTodoList([todoItem, ...todoList]);
     localStorage.setItem("todoList", JSON.stringify(todoList));
     setTodoItem({ id: null, todo: "" });
     todoRef.current.focus();
@@ -44,7 +43,33 @@ const Todo = () => {
         <FcTodoList />
       </Button>
       {showTodo && (
-        <Box pos={"absolute"} top={20} w={"100%"}>
+        <Box
+          pos={"absolute"}
+          top={"55px"}
+          w={"100%"}
+          h={"auto"}
+          maxH={"500px"}
+          p={2}
+          borderRadius={5}
+          overflowY={"scroll"}
+          sx={{
+            backdropFilter: "blur(10px)",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+          }}
+        >
+          <Flex>
+            <Input
+              bg={"blur(10px)"}
+              placeholder="Add Todo"
+              name="todo"
+              value={todoItem.todo}
+              onChange={handleTodoInput}
+              ref={todoRef}
+            />
+            <Button onClick={addToTodo}>Add</Button>
+          </Flex>
           {todoList.map((todo) => (
             <Box key={todo.id}>
               <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -57,16 +82,6 @@ const Todo = () => {
               <Divider />
             </Box>
           ))}
-          <Flex>
-            <Input
-              placeholder="Add Todo"
-              name="todo"
-              value={todoItem.todo}
-              onChange={handleTodoInput}
-              ref={todoRef}
-            />
-            <Button onClick={addToTodo}>Add</Button>
-          </Flex>
         </Box>
       )}
     </Flex>

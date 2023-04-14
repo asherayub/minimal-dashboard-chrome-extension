@@ -1,15 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Box,
   Button,
   Container,
   Flex,
   Grid,
+  Heading,
   Input,
   InputGroup,
   InputLeftElement,
   Link,
   Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/react";
 import { BsGoogle } from "react-icons/bs";
@@ -20,17 +22,27 @@ import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
 import AddFavourite from "./components/AddFavourite";
 import { FavouriteContext } from "./components/FavouriteContext";
 import Todo from "./components/Todo";
-import useHover from "./useHooks/useHover";
 
 function App() {
+  const [background, setBackground] = useState("");
+  const hasBackground = localStorage.getItem("hasBackground");
+  const [getBackground, setGetBackground] = useState(
+    hasBackground === "true" ? true : false
+  );
   const [searchTerm, setSearchTerm] = useState("");
+  const [time, setTime] = useState(
+    new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+    })
+  );
+
   const [searchEngine, setSearchEngine] = useState(
     localStorage.getItem("searchEngine")
       ? localStorage.getItem("searchEngine")
       : "google"
   );
   const { favourites, removeFavorite } = useContext(FavouriteContext);
-  const [isHovered, hoverRef] = useHover();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const searchIcon = () => {
@@ -43,19 +55,64 @@ function App() {
     }
   };
 
+  const ToolTipIcon = React.forwardRef(({ children, ...rest }, ref) => (
+    <Box ref={ref} {...rest}>
+      {children}
+    </Box>
+  ));
+
+  useEffect(() => {
+    if (getBackground) {
+      fetch(
+        "https://apis.scrimba.com/unsplash/photos/random?orientation=landscape&query=nature"
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setBackground(data.urls.full);
+        });
+    }
+  }, [getBackground]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(
+        new Date().toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        })
+      );
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [time]);
+
+  useEffect(() => {
+    localStorage.setItem("hasBackground", getBackground);
+  }, [getBackground]);
+
   return (
     <div className="App">
-      <Container maxW={"100vw"} h={"100vh"} p={5}>
+      <Container
+        maxW={"100vw"}
+        h={"100vh"}
+        p={5}
+        backgroundImage={getBackground ? `url(${background})` : ""}
+        bgSize={"cover"}
+        bgRepeat={"no-repeat"}
+        bgPosition={"center"}
+      >
         <Grid templateColumns={"1fr 2fr 1fr"} gap={2}>
           <Box gridColumn={"1 / 2"}>
             <Todo />
           </Box>
           <Box mt={100}>
+            <Heading textAlign={"center"} mb={5} fontSize={"5rem"}>
+              {time}
+            </Heading>
             <form
               action={`https://www.${searchEngine}.com/search`}
               method="GET"
             >
-              <InputGroup>
+              <InputGroup maxW={600} mx={"auto"}>
                 <InputLeftElement
                   cursor={"pointer"}
                   onClick={() => {
@@ -67,6 +124,7 @@ function App() {
                   fontSize={"1.5rem"}
                 />
                 <Input
+                  bg={"blur(10px)"}
                   type="text"
                   name="q"
                   value={searchTerm}
@@ -87,19 +145,20 @@ function App() {
               {favourites.map((fav) => {
                 return (
                   <Flex
+                    id={fav.id}
                     key={fav.id}
                     w={100}
                     flexDirection={"column"}
                     justifyContent={"center"}
                     alignItems={"center"}
-                    ref={hoverRef}
                     pos={"relative"}
                   >
                     <Link
+                      bg={"#5858585a"}
                       w={"70px"}
                       h={"70px"}
                       borderRadius={"50"}
-                      border={"1px solid lightgray"}
+                      border={"1px solid #585858a5"}
                       sx={{
                         display: "inline-flex",
                         justifyContent: "center",
@@ -115,18 +174,32 @@ function App() {
                         src={`http://www.google.com/s2/favicons?domain=${fav.siteURL}`}
                       />
                     </Link>
-                    {isHovered && (
-                      <IoClose
+                    <Tooltip
+                      label="Remove"
+                      aria-label="A tooltip"
+                      placement={"top"}
+                      hasArrow
+                    >
+                      <ToolTipIcon
                         onClick={() => removeFavorite(fav.id)}
                         style={{
                           position: "absolute",
-                          right: "-5",
                           top: "0",
+                          right: "0",
+                          opacity: "0.2",
                           cursor: "pointer",
                         }}
-                      />
-                    )}
-                    <Text textAlign={"center"}>
+                      >
+                        <IoClose />
+                      </ToolTipIcon>
+                    </Tooltip>
+
+                    <Text
+                      textAlign={"center"}
+                      sx={{
+                        backdropFilter: "blur(10px)",
+                      }}
+                    >
                       {fav.siteName.split(" ")[0]}
                     </Text>
                   </Flex>
@@ -139,6 +212,24 @@ function App() {
             <Button w={50} h={50} borderRadius={50} onClick={toggleColorMode}>
               {colorMode === "light" ? <BsFillMoonFill /> : <BsFillSunFill />}
             </Button>
+            <Tooltip
+              label="Get New Background on Each Refresh"
+              aria-label="A tooltip"
+              placement={"top-start"}
+              hasArrow
+            >
+              <ToolTipIcon pos={"absolute"} bottom="5" right="5">
+                <input
+                  type="checkbox"
+                  name="getBackground"
+                  id="getBackground"
+                  checked={getBackground}
+                  onChange={() => {
+                    setGetBackground(!getBackground);
+                  }}
+                />
+              </ToolTipIcon>
+            </Tooltip>
           </Box>
         </Grid>
       </Container>
