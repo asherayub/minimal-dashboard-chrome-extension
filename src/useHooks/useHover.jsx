@@ -6,6 +6,7 @@ const useHover = () => {
   const enter = () => setHovered(true);
   const leave = () => setHovered(false);
   React.useEffect(() => {
+    if (ref.current === null) return;
     ref.current.addEventListener("mouseenter", enter);
     ref.current.addEventListener("mouseleave", leave);
     return () => {

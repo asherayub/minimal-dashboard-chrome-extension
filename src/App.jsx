@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { BsGoogle } from "react-icons/bs";
 import { SiMicrosoftbing } from "react-icons/si";
-import { SlOptionsVertical } from "react-icons/sl";
+import { IoClose } from "react-icons/io5";
 
 import AddFavourite from "./components/AddFavourite";
 import { FavouriteContext } from "./components/FavouriteContext";
@@ -21,7 +21,7 @@ import useHover from "./useHooks/useHover";
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchEngine, setSearchEngine] = useState("google");
-  const { favourites } = useContext(FavouriteContext);
+  const { favourites, removeFavorite } = useContext(FavouriteContext);
   const [isHovered, hoverRef] = useHover();
   const searchIcon = () => {
     if (searchEngine === "google") {
@@ -79,12 +79,12 @@ function App() {
                     justifyContent={"center"}
                     alignItems={"center"}
                     ref={hoverRef}
+                    pos={"relative"}
                   >
                     <Link
                       w={"70px"}
                       h={"70px"}
                       borderRadius={"50"}
-                      pos={"relative"}
                       border={"1px solid lightgray"}
                       sx={{
                         display: "inline-flex",
@@ -95,18 +95,23 @@ function App() {
                       transition={"border 0.2s ease-in-out"}
                       href={fav.siteURL}
                     >
-                      {isHovered && <SlOptionsVertical style={{
-                        position: "absolute",
-                        top: "0",
-                        right: "-10",
-
-                      }} />}
                       <img
                         height="40"
                         width="40"
                         src={`http://www.google.com/s2/favicons?domain=${fav.siteURL}`}
                       />
                     </Link>
+                    {isHovered && (
+                      <IoClose
+                        onClick={() => removeFavorite(fav.id)}
+                        style={{
+                          position: "absolute",
+                          right: "0",
+                          bottom: "5",
+                          cursor: "pointer",
+                        }}
+                      />
+                    )}
                     <Text textAlign={"center"}>
                       {fav.siteName.split(" ")[0]}
                     </Text>

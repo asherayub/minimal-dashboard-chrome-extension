@@ -21,12 +21,16 @@ const FavouriteContextProvider = (props) => {
     setFavourites([...favourites, favouriteObj]);
     setFavouriteObj({ id: nanoid(), siteName: "", siteURL: "" });
   };
+  const removeFavorite = (id) => {
+    const newFavouriteList = favourites.filter((favourite) => favourite.id !== id);
+    setFavourites(newFavouriteList);
+  }
   React.useEffect(() => {
     localStorage.setItem("favourites", JSON.stringify(favourites));
   }, [favourites]);
   return (
     <FavouriteContext.Provider
-      value={{ favouriteObj, favourites, handleFavouriteInput, addToFavourite }}
+      value={{ favouriteObj, favourites, handleFavouriteInput, addToFavourite, removeFavorite }}
     >
       {props.children}
     </FavouriteContext.Provider>

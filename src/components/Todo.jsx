@@ -23,9 +23,10 @@ const Todo = () => {
       {showTodo && (
         <Box pos={"absolute"} top={10} w={"100%"}>
           {todoList.map((todo) => (
-            <Text key={todo.id} p={2}>
-              {todo.todo} <Divider />
-            </Text>
+            <Box key={todo.id}>
+              <Text p={2}>{todo.todo}</Text>
+              <Divider />
+            </Box>
           ))}
           <Flex>
             <Input
