@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import {
   Box,
+  Button,
   Container,
   Flex,
   Grid,
@@ -10,19 +11,24 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
+import { useColorMode } from "@chakra-ui/react";
 import { BsGoogle } from "react-icons/bs";
 import { SiMicrosoftbing } from "react-icons/si";
 import { IoClose } from "react-icons/io5";
+import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
 
 import AddFavourite from "./components/AddFavourite";
 import { FavouriteContext } from "./components/FavouriteContext";
 import Todo from "./components/Todo";
 import useHover from "./useHooks/useHover";
+
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchEngine, setSearchEngine] = useState("google");
   const { favourites, removeFavorite } = useContext(FavouriteContext);
   const [isHovered, hoverRef] = useHover();
+  const { colorMode, toggleColorMode } = useColorMode();
+
   const searchIcon = () => {
     if (searchEngine === "google") {
       return <BsGoogle />;
@@ -30,6 +36,7 @@ function App() {
       return <SiMicrosoftbing />;
     }
   };
+
   return (
     <div className="App">
       <Container maxW={"100vw"} h={"100vh"} p={5}>
@@ -121,7 +128,11 @@ function App() {
               <AddFavourite />
             </Grid>
           </Box>
-          <Box>Theme Switcher</Box>
+          <Box justifySelf={"flex-end"}>
+            <Button w={50} h={50} borderRadius={50} onClick={toggleColorMode}>
+              {colorMode === "light" ? <BsFillMoonFill /> : <BsFillSunFill />}
+            </Button>
+          </Box>
         </Grid>
       </Container>
     </div>

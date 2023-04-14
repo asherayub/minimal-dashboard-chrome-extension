@@ -1,6 +1,8 @@
 import { nanoid } from "nanoid";
 import React, { createContext, useState } from "react";
+
 const FavouriteContext = createContext();
+
 const FavouriteContextProvider = (props) => {
   const [favouriteObj, setFavouriteObj] = useState({
     id: nanoid(),
@@ -12,6 +14,7 @@ const FavouriteContextProvider = (props) => {
       ? JSON.parse(localStorage.getItem("favourites"))
       : []
   );
+
   const handleFavouriteInput = (e) => {
     const { name, value } = e.target;
     setFavouriteObj({ ...favouriteObj, [name]: value });
@@ -21,16 +24,27 @@ const FavouriteContextProvider = (props) => {
     setFavourites([...favourites, favouriteObj]);
     setFavouriteObj({ id: nanoid(), siteName: "", siteURL: "" });
   };
+
   const removeFavorite = (id) => {
-    const newFavouriteList = favourites.filter((favourite) => favourite.id !== id);
+    const newFavouriteList = favourites.filter(
+      (favourite) => favourite.id !== id
+    );
     setFavourites(newFavouriteList);
-  }
+  };
+
   React.useEffect(() => {
     localStorage.setItem("favourites", JSON.stringify(favourites));
   }, [favourites]);
+
   return (
     <FavouriteContext.Provider
-      value={{ favouriteObj, favourites, handleFavouriteInput, addToFavourite, removeFavorite }}
+      value={{
+        favouriteObj,
+        favourites,
+        handleFavouriteInput,
+        addToFavourite,
+        removeFavorite,
+      }}
     >
       {props.children}
     </FavouriteContext.Provider>

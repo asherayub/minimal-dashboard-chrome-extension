@@ -12,14 +12,17 @@ import {
   Input,
   Box,
 } from "@chakra-ui/react";
+
 import { HiPlus } from "react-icons/hi";
 import { FavouriteContext } from "./FavouriteContext";
+
 export default function AddFavourite() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
-  const { favouriteObj, favourites, handleFavouriteInput, addToFavourite } =
+
+  const { favouriteObj, handleFavouriteInput, addToFavourite } =
     useContext(FavouriteContext);
 
   return (
