@@ -51,6 +51,7 @@ function App() {
             >
               <InputGroup>
                 <InputLeftElement
+                cursor={"pointer"}
                   onClick={() => {
                     searchEngine === "google"
                       ? setSearchEngine("bing")
